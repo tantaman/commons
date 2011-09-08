@@ -32,6 +32,45 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
+ * An executor that folds duplicate task submissions.
+ * 
+ * If a task is submitted while an equivalent
+ * task is waiting in the queue,
+ * only one of those tasks will be run.
+ * 
+ * If the constructor parameter pThrowAway is set to true,
+ * submitted tasks that are equivalent to an already
+ * running or queued task will be thrown out.
+ * 
+ * If pThrowAway is false, submitted tasks
+ * that are equivalent to a currently queued task 
+ * will replace that queued task.
+ * 
+ * Example:
+ * 
+ * FoldingExecutor with pThrowAway set to FALSE
+ * Running Tasks:
+ * A1 B1 C1
+ * Queued Tasks:
+ * D1 E1 F1
+ * 
+ * New submission:
+ * task D2
+ * 
+ * since D2 is equivalent to D1 (determined via hashCode and equals)
+ * D1 will be removed from the queue and replace by D2.
+ * 
+ * The resulting queue will look like:
+ * Queued Tasks:
+ * D2 E1 F1
+ * 
+ * Note: running tasks can not be replaced.  So submitting
+ * A2 while A1 is running will just add A2 to the queue.
+ * 
+ * FoldingExecutor with pThrowAway set to TRUE
+ * If pThrowAway is true, new tasks are thrown away
+ * if an equivalent task is queued or running.
+ * 
  * 
  * @author Matt Crinklaw-Vogt
  *
