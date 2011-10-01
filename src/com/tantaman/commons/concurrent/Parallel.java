@@ -27,7 +27,7 @@ public class Parallel {
 	private static final int NUM_CORES = Runtime.getRuntime().availableProcessors();
 	
 	// TODO: replace with custom cached thread pool.
-	private static ExecutorService forPool = Executors.newFixedThreadPool(NUM_CORES * 2, new NamedThreadFactory("Parallel.For"));
+	private static final ExecutorService forPool = Executors.newFixedThreadPool(NUM_CORES * 2, new NamedThreadFactory("Parallel.For"));
 	
 	public static <T> void For(final Iterable<T> pElements, final Operation<T> pOperation) {
 		ExecutorService executor = forPool;
