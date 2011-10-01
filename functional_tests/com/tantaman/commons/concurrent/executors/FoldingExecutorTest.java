@@ -14,7 +14,7 @@
  *   limitations under the License.
  */
 
-package com.tantaman.commons.concurrent;
+package com.tantaman.commons.concurrent.executors;
 
 import java.util.LinkedList;
 import java.util.List;

@@ -69,7 +69,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * 
  * FoldingExecutor with pThrowAway set to TRUE
  * If pThrowAway is true, new tasks are thrown away
- * if an equivalent task is queued or running.
+ * if an equivalent task is queued OR running.
  * 
  * 
  * @author Matt Crinklaw-Vogt

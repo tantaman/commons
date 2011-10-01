@@ -1,5 +1,5 @@
 /*
-*   Copyright 2010 Matthew Crinklaw-Vogt
+*   Copyright 2011 Matthew Crinklaw-Vogt
 *
 *   Licensed under the Apache License, Version 2.0 (the "License");
 *   you may not use this file except in compliance with the License.
@@ -16,6 +16,11 @@
 
 package com.tantaman.commons.concurrent.executors;
 
+/**
+ * Same as folding executor but uses a dedicated thread to do the folding.
+ * @author tantaman
+ *
+ */
 public class ConcurrentFoldingFoldingExecutor {
 
 }
