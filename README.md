@@ -113,9 +113,10 @@ Examples
 		exec.shutdown();
 		exec.awaitTermination(200, TimeUnit.MILLISECONDS);
 	}
-  }
+    }
   
 **Output**
+
     REPLACE
     **whichever string got to the running state before being replaced, could be none of them**
     us
@@ -143,6 +144,7 @@ Examples
 		});
 
 **Output**
+
     Task completed with result: 5
 
 **InvocationCombiner**
@@ -178,9 +180,10 @@ Examples
 			combiner.invoke(message);
 		}
 	}
-}
+    }
 
 **Output:**
+
     RUNNING FOR THE 1 TIME!
     combining
     all
