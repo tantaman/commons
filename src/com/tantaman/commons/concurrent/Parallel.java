@@ -20,19 +20,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 public class Parallel {
 	private static final int NUM_CORES = Runtime.getRuntime().availableProcessors();
 	
 	// TODO: replace with custom cached thread pool.
-	private static ExecutorService forPool = new ThreadPoolExecutor(NUM_CORES, NUM_CORES * 2,
-            60L, TimeUnit.SECONDS,
-            new SynchronousQueue<Runnable>(),
-            new NamedThreadFactory(Parallel.class.getSimpleName() + ".For-pool"));
+	private static ExecutorService forPool = Executors.newFixedThreadPool(NUM_CORES * 2, new NamedThreadFactory("Parallel.For"));
 	
 	public static <T> void For(final Iterable<T> pElements, final Operation<T> pOperation) {
 		ExecutorService executor = forPool;
