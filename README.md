@@ -124,6 +124,7 @@ Examples
     we
 
 **ObservableFuturesThreadPool**
+
     ObservableFuturesThreadPool pool = 
 		new ObservableFuturesThreadPool(1, 1,
                 0L, TimeUnit.MILLISECONDS,
