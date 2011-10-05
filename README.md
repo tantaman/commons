@@ -36,6 +36,9 @@ get and blocking or making custom runnables to notify something.
 
 Pretty similar to FoldingExecutor but there are some important differences.  The InvocationCombiner takes an optional duration over which invocations are combined.  The InvocationCombiner combines values, not runnables/callables.  The combined values are passed as a list to the actual runnable that is processing tasks.
 
+**GCNotifier**
+
+Get a notification when an object of interest is garbage collected, without using finalizers.
 
 Examples
 --------
