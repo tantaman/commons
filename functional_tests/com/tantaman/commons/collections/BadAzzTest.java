@@ -25,7 +25,7 @@ public class BadAzzTest {
 		
 		badazzList.doStuff();
 		
-		Assert.assertEquals(5, invocationCount);
+		Assert.assertEquals(4, invocationCount);
 	}
 	
 	private static interface TestInterface {
@@ -45,7 +45,7 @@ public class BadAzzTest {
 	private class SubTestObject extends TestObject {
 		@Override
 		public void doStuff() {
-			invocationCount += 2;
+			invocationCount += 1;
 		}
 	}
 
