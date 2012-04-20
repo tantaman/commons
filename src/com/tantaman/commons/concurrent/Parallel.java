@@ -50,7 +50,6 @@ public class Parallel {
 			} catch (ExecutionException e) {
 			}
 		}
-		executor.shutdown();
 	}
 	
 	public static interface Operation<T> {
