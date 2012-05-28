@@ -45,7 +45,7 @@ Examples
 
 **FoldingExecutor**
 
-
+```java
     package com.tantaman.commons.examples;
 
     import java.util.concurrent.ExecutorService;
@@ -117,6 +117,7 @@ Examples
 		exec.awaitTermination(200, TimeUnit.MILLISECONDS);
 	}
     }
+```
   
 **Output**
 
@@ -128,6 +129,7 @@ Examples
 
 **ObservableFuturesThreadPool**
 
+```java
     ObservableFuturesThreadPool pool = 
 		new ObservableFuturesThreadPool(1, 1,
                 0L, TimeUnit.MILLISECONDS,
@@ -146,6 +148,7 @@ Examples
 				System.out.println("Task completed with result: " + result);
 			}
 		});
+```
 
 **Output**
 
@@ -153,6 +156,7 @@ Examples
 
 **InvocationCombiner**
 
+```java
     package com.tantaman.commons.examples;
 
     import java.util.LinkedList;
@@ -185,6 +189,7 @@ Examples
 		}
 	}
     }
+```
 
 **Output:**
 
