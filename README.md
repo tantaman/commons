@@ -3,6 +3,8 @@ tantaman.commons
 
 *Useful Java libraries mostly pertaining to concurrency.*
 
+building: "mvn package"
+
 Some highlights:
 ----------------
 
@@ -39,6 +41,10 @@ Pretty similar to FoldingExecutor but there are some important differences.  The
 **GCNotifier**
 
 Get a notification when an object of interest is garbage collected, without using finalizers.
+
+**Parallel.For**
+
+Basic implementation of .Net's `Parallel.For`
 
 Examples
 --------
