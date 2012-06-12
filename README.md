@@ -42,6 +42,10 @@ Pretty similar to FoldingExecutor but there are some important differences.  The
 
 Get a notification when an object of interest is garbage collected, without using finalizers.
 
+**Parallel.For**
+
+Basic implementation of .Net's `Parallel.For`
+
 Examples
 --------
 
