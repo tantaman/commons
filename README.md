@@ -3,6 +3,8 @@ tantaman.commons
 
 *Useful Java libraries mostly pertaining to concurrency.*
 
+building: "mvn package"
+
 Some highlights:
 ----------------
 
