@@ -25,20 +25,55 @@ package com.tantaman.commons.examples;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.debian.alioth.shootout.u32.nbody.NBodySystem;
+
 import com.tantaman.commons.concurrent.Parallel;
 
 public class ParallelForDemo {
+	/*
+	 * NBodySystem bodies = new NBodySystem();
+        System.out.printf("%.9f\n", bodies.energy());
+        for (int i=0; i<n; ++i)
+           bodies.advance(0.01);
+	 */
+	
 	public static void main(String[] args) {
 		List<Integer> elems = new LinkedList<Integer>();
-		for (int i = 0; i < 20; ++i) {
-			elems.add(i);
+		for (int i = 0; i < 40; ++i) {
+			elems.add(i*55000 + 100);
 		}
 		
 		Parallel.For(elems, new Parallel.Operation<Integer>() {
 			public void perform(Integer pParameter) {
-				System.out.println(pParameter);
+				// do something with the parameter
 			};
 		});
+		
+		Parallel.Operation<Integer> bodiesOp = new Parallel.Operation<Integer>() {
+			@Override
+			public void perform(Integer pParameter) {
+				NBodySystem bodies = new NBodySystem();
+				for (int i = 0; i < pParameter; ++i)
+					bodies.advance(0.01);
+			}
+		};
+		
+		System.out.println("RUNNING THE Parallel.For vs Parallel.ForFJ performance comparison");
+		System.out.println("This could take a while.");
+		// warm up.. it really does have a large impact.
+		Parallel.ForFJ(elems, bodiesOp);
+		
+		long start = System.currentTimeMillis();
+		Parallel.For(elems, bodiesOp);
+		long stop = System.currentTimeMillis();
+		
+		System.out.println("DELTA TIME VIA NORMAL PARALLEL FOR: " + (stop - start));
+		
+		start = System.currentTimeMillis();
+		Parallel.ForFJ(elems, bodiesOp);
+		stop = System.currentTimeMillis();
+		
+		System.out.println("DELTA TIME VIA FOR FORK JOIN: " + (stop - start));
 		
 		System.out.println("Finished");
 	}

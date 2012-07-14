@@ -29,5 +29,5 @@ package com.tantaman.commons.examples;
  *
  */
 public class BadAzzDemo {
-
+	// BadAzz is pretty simple.  See BadAzzTest
 }

@@ -22,39 +22,49 @@
 
 package com.tantaman.commons.concurrent;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.ForkJoinPool;
 
 public class Parallel {
     private static final int NUM_CORES = Runtime.getRuntime().availableProcessors();
 
     private static final ExecutorService forPool = Executors.newFixedThreadPool(NUM_CORES * 2, new NamedThreadFactory("Parallel.For"));
+    private static final ForkJoinPool fjPool = new ForkJoinPool(NUM_CORES, ForkJoinPool.defaultForkJoinWorkerThreadFactory, null, true);
 
-    public static <T> void For(final Iterable<T> pElements, final Operation<T> pOperation) {
-        ExecutorService executor = forPool;
-        List<Future<?>> futures = new LinkedList<Future<?>>();
-        for (final T element : pElements) {
-            Future<?> future = executor.submit(new Runnable() {
-                @Override
-                public void run() {
-                    pOperation.perform(element);
-                }
-            });
-
-            futures.add(future);
-        }
-
-        for (Future<?> f : futures) {
-            try {
-                f.get();
-            } catch (InterruptedException e) {
-            } catch (ExecutionException e) {
-            }
-        }
+    public static <T> void For(final Iterable<T> elements, final Operation<T> operation) {
+    	try {
+			forPool.invokeAll(createCallables(elements, operation));
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+    }
+    
+    public static <T> void ForFJ(final Iterable<T> elements, final Operation<T> operation) {
+    	// TODO: is this really utilizing any fork-join capabilities since it is just an invokeAll?
+    	// I assume work stealing is at least going on since this is sumbitted to a fork-join pool?
+    	// but performance tests don't show a different between this and the old way.
+    	fjPool.invokeAll(createCallables(elements, operation));
+    }
+    
+    public static <T> Collection<Callable<Void>> createCallables(final Iterable<T> elements, final Operation<T> operation) {
+    	List<Callable<Void>> callables = new LinkedList<Callable<Void>>();
+    	for (final T elem : elements) {
+    		callables.add(new Callable<Void>() {
+				
+				@Override
+				public Void call() {
+					operation.perform(elem);
+					return null;
+				}
+			});
+    	}
+    	
+    	return callables;
     }
 
     public static interface Operation<T> {
