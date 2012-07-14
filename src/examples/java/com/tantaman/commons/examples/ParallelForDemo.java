@@ -30,13 +30,6 @@ import org.debian.alioth.shootout.u32.nbody.NBodySystem;
 import com.tantaman.commons.concurrent.Parallel;
 
 public class ParallelForDemo {
-	/*
-	 * NBodySystem bodies = new NBodySystem();
-        System.out.printf("%.9f\n", bodies.energy());
-        for (int i=0; i<n; ++i)
-           bodies.advance(0.01);
-	 */
-	
 	public static void main(String[] args) {
 		List<Integer> elems = new LinkedList<Integer>();
 		for (int i = 0; i < 40; ++i) {
