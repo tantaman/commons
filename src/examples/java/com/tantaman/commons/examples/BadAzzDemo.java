@@ -20,8 +20,14 @@
  * THE SOFTWARE.
  */
 
-package com.tantaman.commons;
+package com.tantaman.commons.examples;
 
-public interface Fn<Return_T, Param_T> {
-	public Return_T fn(Param_T param);
+/**
+ * BadAzz is a wrapper around a homogeneous collection that invokes a given
+ * function on all members of the collection.
+ * @author tantaman
+ *
+ */
+public class BadAzzDemo {
+
 }

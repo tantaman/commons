@@ -22,12 +22,12 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Assert;
 import org.junit.Test;
 
 import com.tantaman.commons.concurrent.NamedThreadFactory;
-import com.tantaman.commons.concurrent.executors.FoldingExecutor;
 
 public class FoldingExecutorTest {
 	private static volatile int numInvocations;
@@ -103,8 +103,13 @@ public class FoldingExecutorTest {
 			}	
 		}
 		
+		exec.shutdown();
+		try {
+			exec.awaitTermination(10, TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		Assert.assertEquals(1, numInvocations);
-		
-		exec.shutdownNow();
 	}
 }

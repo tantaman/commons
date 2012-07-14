@@ -20,8 +20,13 @@
  * THE SOFTWARE.
  */
 
-package com.tantaman.commons;
+package com.tantaman.commons.examples;
 
-public interface Fn<Return_T, Param_T> {
-	public Return_T fn(Param_T param);
+/**
+ * Here we compare Parallel.For with Parallel.ForFJ (fork-join)
+ * @author tantaman
+ *
+ */
+public class ParallelForComparisonDemo {
+
 }
