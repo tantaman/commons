@@ -5,209 +5,33 @@ tantaman.commons
 
 building: "mvn package"
 
-Some highlights:
-----------------
+## A Tour of tantaman.commons
 
-**FoldingExecutor**
+### tantaman.commons.collections
+* **[BadAzz](https://github.com/tantaman/commons/wiki/Tour-of-BadAzz)** - Wraps a collection up in a user defined interface.  Whenever a method is called on the wrapped collection that method is applied to all members of the collection.  Similar to how jQuery functions. [More...](https://github.com/tantaman/commons/wiki/Tour-of-BadAzz)
 
-This executor is designed to ease the handling of duplicate task submissions.
+### tantaman.commons.concurrent
+* **[NamedThreadFactory](https://github.com/tantaman/commons/wiki/Tour-of-NamedThreadFactory)** - Creates and names threads with a specified name.  [More...](https://github.com/tantaman/commons/wiki/Tour-of-NamedThreadFactory)
+* **[Parallel](https://github.com/tantaman/commons/wiki/Parallel-Tour)** - Provides an implementation of [C#'s Parallel.ForEach](http://msdn.microsoft.com/en-us/library/dd460720.aspx).  [More...](https://github.com/tantaman/commons/wiki/Parallel-Tour)
 
-There are two modes of operation:
+### tantaman.commons.concurrent.executors
+* **[FoldingExecutor](https://github.com/tantaman/commons/wiki/FoldingExecutor-Tour)** - An executor that can fold or discard duplicate task submissions.  [More...](https://github.com/tantaman/commons/wiki/FoldingExecutor-Tour)
+* **[ObservableFuturesThreadPool](https://github.com/tantaman/commons/wiki/ObservableFuturesThreadPool--Tour)** - A thread pool that returns futures that can be observed for completion.  [More...](https://github.com/tantaman/commons/wiki/ObservableFuturesThreadPool--Tour)
 
-1. If a task is submitted that is equivalent to an already queued task, then the queued
-task is replaced by the new submission.
-2. If a task is submitted that is equivalent to an already queued OR running task, then the
-new task is ignored.
+### tantaman.commons.concurrent.throttler
+* **[InvocationCombiner](https://github.com/tantaman/commons/wiki/InvocationCombiner-Tour)** - A service that combines all invocations that occur within a given time threshold.  [More...](https://github.com/tantaman/commons/wiki/InvocationCombiner-Tour)
+* TODO: Debouncer...
 
-*Duplicate tasks are determined by evaluating the hashCode and equals methods on the 
-callables or runnables submitted to the executor.*
+### tantaman.commons.gc
+* **[GCNotifier](https://github.com/tantaman/commons/wiki/GCNotifier-Tour)** - Allows one to be notified when specific objects have been garbage collected, without using finalizers.  [More...](https://github.com/tantaman/commons/wiki/GCNotifier-Tour)
 
+### tantaman.commons.lang
+* **DelegatingHashCodeAndEquals** - Delegates hashCode and equals calls to a specified delegate.  More...
+* **[ObjectUtils](https://github.com/tantaman/commons/wiki/ObjectUtils-Tour)** - Various methods for working with and creating objects.  [More...](https://github.com/tantaman/commons/wiki/ObjectUtils-Tour)
 
-A good use case for this is handling user generated events that cause a costly update to 
-a GUI.  E.g., a user spamming a "update image" button.  Only the last update is relevant
-and you don't want to keep the user waiting while an entire queue of events is processed.
+### tantaman.commons.listeners
+* **[WeakListenerSet](https://github.com/tantaman/commons/wiki/WeakListenerSet-Tour)** - A set that holds listeners weakly.  [More...](https://github.com/tantaman/commons/wiki/WeakListenerSet-Tour)
 
-**ObservableFuturesThreadPool**
-
-A thread pool that returns futures which can be observed for completion.  No more calling
-get and blocking or making custom runnables to notify something.
-
-
-
-**InvocationCombiner**
-
-Pretty similar to FoldingExecutor but there are some important differences.  The InvocationCombiner takes an optional duration over which invocations are combined.  The InvocationCombiner combines values, not runnables/callables.  The combined values are passed as a list to the actual runnable that is processing tasks.
-
-**GCNotifier**
-
-Get a notification when an object of interest is garbage collected, without using finalizers.
-
-**Parallel.For**
-
-Basic implementation of .Net's `Parallel.For`
-
-Examples
---------
-
-**FoldingExecutor**
-
-```java
-    package com.tantaman.commons.examples;
-
-    import java.util.concurrent.ExecutorService;
-    import java.util.concurrent.Executors;
-    import java.util.concurrent.TimeUnit;
-
-    import com.tantaman.commons.concurrent.executors.FoldingExecutor;
-
-    public class FoldingExecutorDemo {
-	private static class Task implements Runnable {
-		private final String message;
-		public Task(String message) {
-			this.message = message;
-		}
-		
-		// hash code and equals that identify
-		// all tasks of this Class as being duplicate tasks.
-		@Override
-		public int hashCode() {
-			return getClass().hashCode();
-		}
-		
-		@Override
-		public boolean equals(Object obj) {
-			return obj.getClass() == getClass();
-		}
-		
-		@Override
-		public void run() {
-			System.out.println(message);
-			try {
-				// sleep for demonstration
-				// ensures that tasks stay running so a queue will be
-				// built up and operated on by the folding executor
-				Thread.sleep(50);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-	
-	public static void main(String[] args) throws InterruptedException {
-		// exec that replaces queued tasks with duplicate submitted tasks
-		ExecutorService exec = new FoldingExecutor(Executors.newFixedThreadPool(1), false);
-		
-		String [] messages = new String [] { "we", "only", "care", "about", "the", "last", "of", "us" };
-		
-		// we might get 2 messages output because replace can't replace running tasks, it
-		// can only replace queued tasks
-		System.out.println("REPLACE");
-		for (String message : messages) {
-			exec.execute(new Task(message));
-		}
-		
-		exec.shutdown();
-		exec.awaitTermination(200, TimeUnit.MILLISECONDS);
-		
-		// exec that throws away duplicate tasks
-		exec = new FoldingExecutor(Executors.newFixedThreadPool(1), true);
-		messages = new String [] { "we", "only", "care", "about", "the", "first", "of", "us" };
-		
-		System.out.println("THROW AWAY");
-                // we'll only see the first message output "we"
-		for (String message : messages) {
-			exec.execute(new Task(message));
-		}
-		
-		exec.shutdown();
-		exec.awaitTermination(200, TimeUnit.MILLISECONDS);
-	}
-    }
-```
-  
-**Output**
-
-    REPLACE
-    **whichever string got to the running state before being replaced, could be none of them**
-    us
-    THROW AWAY
-    we
-
-**ObservableFuturesThreadPool**
-
-```java
-    ObservableFuturesThreadPool pool = 
-		new ObservableFuturesThreadPool(1, 1,
-                0L, TimeUnit.MILLISECONDS,
-                new LinkedBlockingQueue<Runnable>());
-		
-		ObservableFuture<Integer> f = pool.submit(new Callable<Integer>() {
-			@Override
-			public Integer call() throws Exception {
-				return 5;
-			}
-		});
-		
-		f.addObserver(new Observer<Integer>() {
-			@Override
-			public void taskCompleted(Integer result) {
-				System.out.println("Task completed with result: " + result);
-			}
-		});
-```
-
-**Output**
-
-    Task completed with result: 5
-
-**InvocationCombiner**
-
-```java
-    package com.tantaman.commons.examples;
-
-    import java.util.LinkedList;
-    import java.util.concurrent.Executors;
-    import java.util.concurrent.TimeUnit;
-
-    import com.tantaman.commons.concurrent.throttler.AccumulativeRunnable;
-    import com.tantaman.commons.concurrent.throttler.InvocationCombiner;
-
-    public class InvocationCombinerDemo {
-	private static int counter = 0;
-	public static void main(String[] args) {
-		InvocationCombiner<String> combiner = new InvocationCombiner<String>(
-				new AccumulativeRunnable<String>() {
-					public void run(LinkedList<String> pParams) {
-						System.out.println("RUNNING FOR THE " + (++counter) + " TIME!");
-						for (String s : pParams) {
-							System.out.println(s);
-						}
-					};
-				}, 50, TimeUnit.MILLISECONDS, Executors.newScheduledThreadPool(1));
-		
-		String [] messages = "combining all invocations over a 50 millisecond period".split(" ");
-		
-		// we could get at most 2 runs b/c the first submission is dispatched immediately,
-		// and then the 50 ms timer kicks in.
-		// TODO: add an initial delay option.
-		for (String message : messages) {
-			combiner.invoke(message);
-		}
-	}
-    }
-```
-
-**Output:**
-
-    RUNNING FOR THE 1 TIME!
-    combining
-    all
-    invocations
-    over
-    a
-    50
-    millisecond
-    period
-    
-*could get 2 calls to the runnable as there is no initial delay time, only a subsequent delay time.  See comment 
-above `combiner.invoke`*
+### tantaman.commons.ref
+* **KeyedWeakReference** - A weak reference that maintains a key.  Useful in maps.  More...
+* **KeyedSoftReference** - A soft reference that maintains a key.  Useful in maps.  More...
