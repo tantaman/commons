@@ -26,10 +26,15 @@ public class BadAzzTest {
 		badazzList.doStuff();
 		
 		Assert.assertEquals(4, invocationCount);
+		
+		badazzList.doStuffWithParams(new Object(), "123");
+		
+		Assert.assertEquals(8, invocationCount);
 	}
 	
 	private static interface TestInterface {
 		public void doStuff();
+		public void doStuffWithParams(Object p1, String p2);
 	}
 	
 	private class TestObject implements TestInterface {
@@ -38,6 +43,11 @@ public class BadAzzTest {
 		
 		@Override
 		public void doStuff() {
+			++invocationCount;
+		}
+		
+		@Override
+		public void doStuffWithParams(Object p1, String p2) {
 			++invocationCount;
 		}
 	}

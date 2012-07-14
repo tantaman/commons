@@ -22,6 +22,15 @@
 
 package com.tantaman.commons.examples;
 
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.geom.Path2D;
+import java.util.Collection;
+import java.util.LinkedList;
+
+import com.tantaman.commons.collections.BadAzz;
+import com.tantaman.commons.examples.BadAzzDemo.Layer;
+
 /**
  * BadAzz is a wrapper around a homogeneous collection that invokes a given
  * function on all members of the collection.
@@ -29,5 +38,49 @@ package com.tantaman.commons.examples;
  *
  */
 public class BadAzzDemo {
-	// BadAzz is pretty simple.  See BadAzzTest
+	public static void main(String[] args) {
+		Collection<Layer> layers = new LinkedList<Layer>();
+		
+		layers.add(new DemoLayer());
+		layers.add(new DemoLayer());
+		layers.add(new DemoLayer());
+		
+		Layer $layers = BadAzz.create(layers, Layer.class);
+		
+		$layers.clip(null);
+		$layers.paint(null);
+		$layers.resize(new Dimension(800, 600));
+	}
+	
+
+
+	 public static interface Layer {
+		public void paint(Graphics2D g2d);
+		public void resize(Dimension newSize);
+		public void clip(Path2D clippingRegion);
+	}
+}
+
+class DemoLayer implements Layer {
+	private static int layerNum = 0;
+	private final int mLayerNum;
+	
+	public DemoLayer() {
+		mLayerNum = ++layerNum;
+	}
+	
+	@Override
+	public void clip(Path2D clippingRegion) {
+		System.out.println("Clipping layer: " + mLayerNum);
+	}
+	
+	@Override
+	public void paint(Graphics2D g2d) {
+		System.out.println("Painting layer: " + mLayerNum);
+	}
+	
+	@Override
+	public void resize(Dimension newSize) {
+		System.out.println("Resizing layer: " + mLayerNum);
+	}
 }

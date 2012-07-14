@@ -22,8 +22,8 @@
 
 package com.tantaman.commons.examples;
 
+import java.util.Collection;
 import java.util.LinkedList;
-import java.util.List;
 
 import org.debian.alioth.shootout.u32.nbody.NBodySystem;
 
@@ -31,7 +31,7 @@ import com.tantaman.commons.concurrent.Parallel;
 
 public class ParallelForDemo {
 	public static void main(String[] args) {
-		List<Integer> elems = new LinkedList<Integer>();
+		Collection<Integer> elems = new LinkedList<Integer>();
 		for (int i = 0; i < 40; ++i) {
 			elems.add(i*55000 + 100);
 		}

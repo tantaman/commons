@@ -30,20 +30,21 @@ public class NamedThreadFactory implements ThreadFactory {
 	private final AtomicLong mThreadNum = new AtomicLong(0);
 	private final String mPrefix;
 	private final boolean mIsDaemon;
+	private final long mPoolNum;
 	
 	public NamedThreadFactory(String pPrefix) {
 		this(pPrefix, true);
-		THREAD_POOL_NUM.incrementAndGet();
 	}
 	
 	public NamedThreadFactory(String pPrefix, boolean pIsDaemon) {
 		mIsDaemon = pIsDaemon;
 		mPrefix = pPrefix;
+		mPoolNum = THREAD_POOL_NUM.incrementAndGet();
 	}
 	
 	@Override
 	public Thread newThread(Runnable r) {
-		Thread t = new Thread(r, mPrefix + "-" + THREAD_POOL_NUM.get() + "-Thread-" + mThreadNum.incrementAndGet());
+		Thread t = new Thread(r, mPrefix + "-" + mPoolNum + "-Thread-" + mThreadNum.incrementAndGet());
 		if (t.isDaemon() != mIsDaemon)
 			t.setDaemon(mIsDaemon);
 		
