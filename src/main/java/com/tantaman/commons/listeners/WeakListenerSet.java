@@ -47,7 +47,7 @@ import com.tantaman.commons.gc.GCNotifier;
  * @author tantaman
  *
  */
-public class WeakListenerSet<T> implements Iterable<T> {
+public class WeakListenerSet<T> implements IListenerSet<T> {
 	private final List<WeakReference<T>> listeners;
 	private final GCNotifier gcNotifier;
 	private final GCListener gcListener;
@@ -87,6 +87,10 @@ public class WeakListenerSet<T> implements Iterable<T> {
 		listeners = new CopyOnWriteArrayList<WeakReference<T>>();
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.tantaman.commons.listeners.ListenerSet#add(T)
+	 */
+	@Override
 	public void add(T listener) {
 		WeakReference<T> ref = new WeakReference<T>(listener);
 		
@@ -116,8 +120,21 @@ public class WeakListenerSet<T> implements Iterable<T> {
 		}
 	}
 	
+	@Override
+	public void remove(T listener) {
+	}
+	
+	/* (non-Javadoc)
+	 * @see com.tantaman.commons.listeners.ListenerSet#size()
+	 */
+	@Override
 	public int size() {
 		return listeners.size();
+	}
+	
+	@Override
+	public void clear() {
+		listeners.clear();
 	}
 	
 	/* No need for a remove since listeners are held weakly.
@@ -167,14 +184,11 @@ public class WeakListenerSet<T> implements Iterable<T> {
 
 		@Override
 		public T next() {
-			System.out.println("NEXT");
 			WeakReference<T> next = iter.next();
 			T theListener = next.get();
 			
 			if (theListener == null) {
-				System.out.println("NULL");
 				listeners.remove(next);
-				System.out.println(listeners.size());
 			}
 			
 			return theListener;
@@ -189,7 +203,6 @@ public class WeakListenerSet<T> implements Iterable<T> {
 	private class GCListener implements GCNotifier.Listener {
 		@Override
 		public void objectCollected() {
-			System.out.println("COLLECTED");
 			Iterator<T> iter = WeakListenerSet.this.iterator();
 			while (iter.hasNext())
 				iter.next(); // next will automatically clean out null entries.

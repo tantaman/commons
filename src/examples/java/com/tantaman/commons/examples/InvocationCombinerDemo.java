@@ -48,7 +48,7 @@ public class InvocationCombinerDemo {
 		// and then the 50 ms timer kicks in.
 		// TODO: add an initial delay option.
 		for (String message : messages) {
-			combiner.invoke(message);
+			combiner.execute(message);
 		}
 	}
 }

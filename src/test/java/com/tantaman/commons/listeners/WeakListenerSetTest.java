@@ -22,17 +22,17 @@
 
 package com.tantaman.commons.listeners;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 
 import com.tantaman.commons.gc.GCNotifier;
-
-import static org.junit.Assert.*;
 
 public class WeakListenerSetTest {
 	public static byte [] tryToForceGC;
 	@Test
 	public void testRegistration() {
-		WeakListenerSet<TestListener> listeners = new WeakListenerSet<TestListener>("SomeName");
+		IListenerSet<TestListener> listeners = new WeakListenerSet<TestListener>("SomeName");
 		TestListener someListener = new TestListener();
 		listeners.add(someListener);
 		
@@ -51,7 +51,7 @@ public class WeakListenerSetTest {
 	
 	@Test
 	public void testNotification() {
-		WeakListenerSet<TestListener> listeners = new WeakListenerSet<TestListener>();
+		IListenerSet<TestListener> listeners = new WeakListenerSet<TestListener>();
 		
 		TestListener someListener = new TestListener();
 		TestListener someListener2 = new TestListener();
@@ -71,7 +71,7 @@ public class WeakListenerSetTest {
 	 */
 	@Test
 	public void testCleanup() {
-		WeakListenerSet<TestListener> listeners = new WeakListenerSet<TestListener>();
+		IListenerSet<TestListener> listeners = new WeakListenerSet<TestListener>();
 		
 		listeners.add(new TestListener());
 		
@@ -98,7 +98,7 @@ public class WeakListenerSetTest {
 	
 	@Test
 	public void testGCListenerCleanup() {
-		WeakListenerSet<TestListener> listeners = new WeakListenerSet<TestListener>(new GCNotifier());
+		IListenerSet<TestListener> listeners = new WeakListenerSet<TestListener>(new GCNotifier());
 		
 		listeners.add(new TestListener());
 		

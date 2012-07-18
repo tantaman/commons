@@ -46,7 +46,7 @@ public class InvocationCombiner<PARAM_TYPE> {
 				pRunnable, 0, pExecutor);
 	}
 
-	public void invoke(PARAM_TYPE pParam) {
+	public void execute(PARAM_TYPE pParam) {
 		mRunnable.add(pParam);
 	}
 
