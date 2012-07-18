@@ -36,6 +36,14 @@ public class EventEmitter<T> {
 		listeners.add(listener);
 	}
 	
+	public void removeListener(T listener) {
+		listeners.remove(listener);
+	}
+	
+	public void removeListeners() {
+		listeners.clear();
+	}
+	
 	public static <LT> EventEmitter<LT> create(Class<LT> listenerInterface, boolean weak) {
 		EventEmitterInvocationHandler<LT> invokeHandler = new EventEmitterInvocationHandler<LT>();
 		Object proxy = Proxy.newProxyInstance(

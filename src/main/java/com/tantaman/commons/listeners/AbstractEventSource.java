@@ -10,4 +10,8 @@ public abstract class AbstractEventSource<T> implements IEventSource<T> {
 	public void addListener(T listener) {
 		emitter.addListener(listener);
 	}
+	
+	public void removeListener(T listener) {
+		emitter.removeListener(listener);
+	}
 }
