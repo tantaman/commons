@@ -22,8 +22,25 @@
 
 package com.tantaman.commons.lang;
 
+import java.lang.reflect.Field;
+
+import sun.misc.Unsafe;
+
+import com.tantaman.commons.Fn;
+
 
 public class ObjectUtils {
+	
+	private static volatile Unsafe unsafe;
+	
+	static {
+		try {
+            Field f = Unsafe.class.getDeclaredField("theUnsafe");
+            f.setAccessible(true);
+            unsafe = (Unsafe)f.get(null);
+		} catch (Exception e) { /* ... */ }
+	}
+	
 	public static Class<?> [] getTypes(Object [] objects) {
 		Class<?> [] types = new Class [objects.length];
 		
@@ -74,6 +91,71 @@ public class ObjectUtils {
 			}
 			
 			return klass.newInstance();
+		}
+		
+		return null;
+	}
+	
+	public static Field [] setFields(Object target, Object source, Fn<Boolean, Field> filter) {
+		Class<?> klass = source.getClass();
+		while (klass != Object.class && klass != null) {
+			setOwnFields(klass, target, source, filter);
+			klass = klass.getSuperclass();
+		}
+		
+		return null;
+	}
+	
+	public static Field [] setOwnFields(Class<?> klass, Object target, Object source, Fn<Boolean, Field> filter) {
+		Field [] fields = klass.getDeclaredFields();
+		for (Field field : fields) {
+			// TODO: looks like we are tieing ourselves to gson here! O NOES!
+			// well we are only tied to their expose annotation and nothing else at the moment.
+			if (filter.fn(field)) {
+				if (!field.isAccessible())
+					field.setAccessible(true);
+				
+				Class fieldType = field.getType();
+				if (fieldType.isPrimitive() || field.getType().getName().startsWith("java")) {
+					try {
+						// Java 1.7 re-enabled the setting of final fields via reflection so we don't have to use Unsafe.
+//						if (Modifier.isFinal(field.getModifiers())) {
+//							long offset = unsafe.objectFieldOffset(field);
+//							if (fieldType == char.class) {
+//								unsafe.putChar(target, offset, field.getChar(source));
+//							} else if (fieldType == int.class) {
+//								unsafe.putInt(target, offset, field.getInt(source));
+//							} else if (fieldType == long.class) {
+//								unsafe.putLong(target, offset, field.getLong(source));
+//							} else if (fieldType == byte.class) {
+//								unsafe.putByte(target, offset, field.getByte(source));
+//							} else if (fieldType == float.class) {
+//								unsafe.putFloat(target, offset, field.getFloat(source));
+//							} else if (fieldType == double.class) {
+//								unsafe.putDouble(target, offset, field.getDouble(source));
+//							} else if (fieldType == boolean.class) {
+//								unsafe.putBoolean(target, offset, field.getBoolean(source));
+//							} else {
+//								unsafe.putObject(target, offset, field.get(source));
+//							}
+//						} else {
+							field.set(target, field.get(source));
+//						}
+					} catch (IllegalArgumentException e) {
+						e.printStackTrace();
+					} catch (IllegalAccessException e) {
+						e.printStackTrace();
+					}
+				} else {
+					try {
+						setFields(field.get(target), field.get(source), filter);
+					} catch (IllegalArgumentException e) {
+						e.printStackTrace();
+					} catch (IllegalAccessException e) {
+						e.printStackTrace();
+					}
+				}
+			}
 		}
 		
 		return null;
