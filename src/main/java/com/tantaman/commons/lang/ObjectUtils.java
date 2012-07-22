@@ -96,17 +96,19 @@ public class ObjectUtils {
 		return null;
 	}
 	
-	public static Field [] setFields(Object target, Object source, Fn<Boolean, Field> filter) {
+	public static Field [] setFields(Object target, Object source, Fn<Boolean, Field> filter, Class<?> upperBound) {
 		Class<?> klass = source.getClass();
-		while (klass != Object.class && klass != null) {
-			setOwnFields(klass, target, source, filter);
+		if (upperBound == null)
+			upperBound = Object.class;
+		while (klass != upperBound && klass != null) {
+			setOwnFields(klass, target, source, filter, upperBound);
 			klass = klass.getSuperclass();
 		}
 		
 		return null;
 	}
 	
-	public static Field [] setOwnFields(Class<?> klass, Object target, Object source, Fn<Boolean, Field> filter) {
+	public static Field [] setOwnFields(Class<?> klass, Object target, Object source, Fn<Boolean, Field> filter, Class<?> upperBound) {
 		Field [] fields = klass.getDeclaredFields();
 		for (Field field : fields) {
 			// TODO: looks like we are tieing ourselves to gson here! O NOES!
@@ -148,7 +150,7 @@ public class ObjectUtils {
 					}
 				} else {
 					try {
-						setFields(field.get(target), field.get(source), filter);
+						setFields(field.get(target), field.get(source), filter, upperBound);
 					} catch (IllegalArgumentException e) {
 						e.printStackTrace();
 					} catch (IllegalAccessException e) {

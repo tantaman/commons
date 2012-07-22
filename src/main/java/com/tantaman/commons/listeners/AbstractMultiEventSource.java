@@ -1,9 +1,12 @@
 package com.tantaman.commons.listeners;
 
 public abstract class AbstractMultiEventSource implements IEventSource<Object> {
-	protected EventEmitterMulti emitter;
+	protected final EventEmitterMulti emitter;
 	public AbstractMultiEventSource(boolean weak, Class ... listenerClasses) {
-		emitter = EventEmitterMulti.create(weak, listenerClasses);
+		if (listenerClasses != null)
+			emitter = EventEmitterMulti.create(weak, listenerClasses);
+		else
+			emitter = null;
 	}
 	
 	@Override

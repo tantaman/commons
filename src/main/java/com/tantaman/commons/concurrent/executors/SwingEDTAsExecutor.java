@@ -13,7 +13,7 @@ import java.util.concurrent.TimeoutException;
 import javax.swing.SwingUtilities;
 
 public class SwingEDTAsExecutor implements ExecutorService {
-
+	public static SwingEDTAsExecutor instance = new SwingEDTAsExecutor();
 	@Override
 	public void execute(Runnable runnable) {
 		if (SwingUtilities.isEventDispatchThread()) {
