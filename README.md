@@ -32,6 +32,8 @@ building: "mvn package"
 ### tantaman.commons.listeners
 * **[WeakListenerSet](https://github.com/tantaman/commons/wiki/WeakListenerSet-Tour)** - A set that holds listeners weakly.  [More...](https://github.com/tantaman/commons/wiki/WeakListenerSet-Tour)
 * **[EventEmitter](https://github.com/tantaman/commons/wiki/EventEmitter-Tour)** - Simplified listener and event management that still retains data types.  [More...](https://github.com/tantaman/commons/wiki/EventEmitter-Tour)
+* **[EventEmitterMulti](https://github.com/tantaman/commons/wiki/EventEmitterMulti-Tour)** - Simplified listener and event management that still retains data types.  [More...](https://github.com/tantaman/commons/wiki/EventEmitterMulti-Tour)
+* **[AbstractMultiEventSource](https://github.com/tantaman/commons/wiki/AbstractMultiEventSource-Tour)** - Simplifies the use of EventEmitter for the most common use case.  [More...](https://github.com/tantaman/commons/wiki/AbstractMultiEventSource-Tour)
 
 ### tantaman.commons.ref
 * **KeyedWeakReference** - A weak reference that maintains a key.  Useful in maps.  More...
