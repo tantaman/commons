@@ -149,8 +149,11 @@ public class WeakListenerSet<T> implements IListenerSet<T> {
 	
 	private class ListenerSetIterator implements Iterator<T> {
 		private final ListIterator<WeakReference<T>> iter;
+		private final List<WeakReference<T>> toRemove;
+		
 		public ListenerSetIterator() {
 			iter = listeners.listIterator();
+			toRemove = new LinkedList<>(); 
 		}
 		
 		@Override
@@ -178,8 +181,13 @@ public class WeakListenerSet<T> implements IListenerSet<T> {
 //				return true;
 //			} else
 //				return false;
+			boolean result = iter.hasNext();
 			
-			return iter.hasNext();
+			if (!result) {
+				listeners.removeAll(toRemove);
+			}
+			
+			return result;
 		}
 
 		@Override
@@ -188,7 +196,7 @@ public class WeakListenerSet<T> implements IListenerSet<T> {
 			T theListener = next.get();
 			
 			if (theListener == null) {
-				listeners.remove(next);
+				toRemove.add(next);
 			}
 			
 			return theListener;

@@ -64,8 +64,10 @@ public class EventEmitterMulti {
 				throws Throwable {
 			if (!method.isAccessible()) method.setAccessible(true); // TODO: security manager checks?
 			for (Object listener : listeners) {
-				if (method.getDeclaringClass().isAssignableFrom(listener.getClass())) {
-					method.invoke(listener, args);
+				if (listener != null) {
+					if (method.getDeclaringClass().isAssignableFrom(listener.getClass())) {
+						method.invoke(listener, args);
+					}
 				}
 			}
 			

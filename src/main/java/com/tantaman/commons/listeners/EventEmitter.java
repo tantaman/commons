@@ -62,7 +62,8 @@ public class EventEmitter<T> {
 				throws Throwable {
 			if (!method.isAccessible()) method.setAccessible(true); // TODO: security manager checks?
 			for (T listener : listeners) {
-				method.invoke(listener, args);
+				if (listener != null)
+					method.invoke(listener, args);
 			}
 			
 			return ObjectUtils.createNullInstanceOf(method.getReturnType());
