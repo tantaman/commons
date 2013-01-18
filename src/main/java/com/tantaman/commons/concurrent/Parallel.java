@@ -29,6 +29,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Parallel {
     private static final int NUM_CORES = Runtime.getRuntime().availableProcessors();
@@ -37,11 +39,19 @@ public class Parallel {
     private static final ForkJoinPool fjPool = new ForkJoinPool(NUM_CORES, ForkJoinPool.defaultForkJoinWorkerThreadFactory, null, true);
 
     public static <T> void For(final Iterable<T> elements, final Operation<T> operation) {
-    	try {
-			forPool.invokeAll(createCallables(elements, operation));
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+        for (final T element : elements) {
+            forPool.submit(new Callable<Void>() {
+                @Override
+                public Void call() {
+                    try {
+                        operation.perform(element);
+                    } catch (Exception e) {
+                        Logger.getLogger(Parallel.class.getName()).log(Level.SEVERE, "Exception during execution of parallel task", e);
+                    }
+                    return null;
+                }
+            });
+        }
     }
     
     public static <T> void ForFJ(final Iterable<T> elements, final Operation<T> operation) {
