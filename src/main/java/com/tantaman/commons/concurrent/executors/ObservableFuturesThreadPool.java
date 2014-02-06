@@ -158,6 +158,8 @@ public class ObservableFuturesThreadPool extends ThreadPoolExecutor {
 	private static class ObservableFutureImpl<V> implements ObservableFuture<V> {
 		private volatile Future<V> delegate;
 		private final Set<ObservableFuture.Observer<V>> listeners;
+		private final Object completeLock = new Object();
+		private boolean complete = false;
 		
 		public ObservableFutureImpl() {
 			listeners = new CopyOnWriteArraySet<ObservableFuture.Observer<V>>();
@@ -165,11 +167,24 @@ public class ObservableFuturesThreadPool extends ThreadPoolExecutor {
 		
 		public void setDelegate(Future<V> delegate) {
 			this.delegate = delegate;
+		   
+			if (delegate.isDone())
+				executionCompleted();
 		}
 		
 		public void executionCompleted() {
 			Exception ex = null;
 			V val = null;
+			
+			synchronized (completeLock) {
+				// If we have no delegate or we've already completed,
+				// bail.
+				if (delegate == null || complete)
+					return;
+	         
+				complete = true;
+			}
+			
 			try {
 				val = delegate.get();
 			} catch (InterruptedException e) {
