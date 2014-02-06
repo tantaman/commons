@@ -21,19 +21,28 @@
  */
 
 package com.tantaman.commons.concurrent.executors;
-
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ExecutionException;
 
 public abstract class AbstractObservableFuture<V> implements ObservableFuture<V> {
 	private final Set<ObservableFuture.Observer<V>> observers = 
-		new CopyOnWriteArraySet<ObservableFuture.Observer<V>>();
+		new LinkedHashSet<ObservableFuture.Observer<V>>();
+	private final Object completeLock = new Object();
 
 	@Override
 	public void addObserver(ObservableFuture.Observer<V> listener) {
-		observers.add(listener);
-		if (isDone()) {
+		boolean notify = false;
+		synchronized (completeLock) {
+			if (isDone())
+				notify = true;
+			else
+				observers.add(listener);
+		}
+	   
+		if (notify) {
 			try {
 				listener.taskCompleted(get());
 			} catch (InterruptedException e) {
@@ -50,6 +59,12 @@ public abstract class AbstractObservableFuture<V> implements ObservableFuture<V>
 	}
 	
 	protected void notifyObservers(V val) {
+		List<ObservableFuture.Observer<V>> observers = null;
+		synchronized (completeLock) {
+			observers = new LinkedList<ObservableFuture.Observer<V>>(this.observers);
+			this.observers.clear();
+		}
+	   
 		for (ObservableFuture.Observer<V> o : observers) {
 			try {
 				o.taskCompleted(val);
